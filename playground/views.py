@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from django.db.models import Q, F
-from store.models import Product, OrderItem, Order
-1
-def say_hello(request):
-    
-    queryset= Order.objects.select_related("customer").prefetch_related("orderitem_set__product").order_by("-placed_at")[:5]
+from django.contrib.contenttypes.models import ContentType
+from django.db import transaction, connection
+from store.models import Product, Collection, Order, OrderItem
+from tags.models import TaggedItem
 
-    return render(request, 'hello.html', {'name': 'Mosh', 'orders' : list(queryset)})
+def say_hello(request):
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM store_product")
+
+    return render(request, 'hello.html', {'name': 'Mosh'})
   
