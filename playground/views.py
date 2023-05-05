@@ -7,7 +7,9 @@ from tags.models import TaggedItem
 def say_hello(request):
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM store_product")
+        cursor.execute("SELECT title, id FROM store_product")
+
+    # queryset = Product.objects.raw("SELECT * FROM store_product")
 
     return render(request, 'hello.html', {'name': 'Mosh'})
   
