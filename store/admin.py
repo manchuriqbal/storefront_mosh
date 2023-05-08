@@ -9,12 +9,25 @@ from . import models
 
 # Register your models here.
 
+class InventoryFilter(admin.SimpleListFilter):
+    title="Inventory"
+    parameter_name= "Inventory"
+
+    def lookups(self, request: Any, model_admin: Any) -> List[Tuple[Any, str]]:
+        return [
+            ("<20", "Low")
+        ]
+    
+    def queryset(self, request: Any, queryset: QuerySet[Any]) -> QuerySet[Any] | None:
+        if self.value() == "<20":
+            return queryset.filter(inventory__lt=20)
+
 
 @admin.register(models.Product)
 class AuthorAdmin(admin.ModelAdmin):
     list_display=["title", "unit_price", "inventory_stustus", "collection_title"]
     list_editable= ["unit_price"]
-    list_filter = ["collection", "last_update"]
+    list_filter = ["collection", "last_update", InventoryFilter]
     list_per_page=15
     list_select_related=["collection"]
 
