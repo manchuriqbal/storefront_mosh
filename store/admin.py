@@ -1,5 +1,5 @@
+from django.contrib import admin, messages
 from typing import Any, List, Optional, Tuple
-from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.db.models import Count
 from django.utils.html import format_html, urlencode
@@ -25,6 +25,7 @@ class InventoryFilter(admin.SimpleListFilter):
 
 @admin.register(models.Product)
 class AuthorAdmin(admin.ModelAdmin):
+    actions= ["clear_inventory"]
     list_display=["title", "unit_price", "inventory_stustus", "collection_title"]
     list_editable= ["unit_price"]
     list_filter = ["collection", "last_update", InventoryFilter]
@@ -39,9 +40,14 @@ class AuthorAdmin(admin.ModelAdmin):
         if Product.inventory < 20:
             return "Low"
         return "Ok"
-
-
     
+    def clear_inventory(self,request, queryset):
+        update_count=queryset.update(inventory=0)
+        self.message_user(
+            request,
+            f"{update_count} Products ware succesfully updated",
+            messages.ERROR
+        )
 
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
