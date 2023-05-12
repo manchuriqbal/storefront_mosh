@@ -24,6 +24,7 @@ class InventoryFilter(admin.SimpleListFilter):
         
 
 
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields= ["collection"]
