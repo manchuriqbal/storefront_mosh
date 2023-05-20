@@ -14,7 +14,6 @@ class ProductSerializer(serializers.ModelSerializer):
         fields= ["id", "title", "unit_price", "price_with_tax", "collection"]
 
     price_with_tax= serializers.SerializerMethodField(method_name="calculate_tax")
-    collection= CollectionSerializer()
     
 
     def calculate_tax(self, product: Product):
