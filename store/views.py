@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Count
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product
-from .serializer import ProductSerializer
+from .models import Product, Collection
+from .serializer import ProductSerializer, CollectionSerializer
 
 # Create your views here.
 
@@ -40,6 +41,31 @@ def product_details(request, id ):
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view()
+@api_view(["GET", "POST"])
+def collection_list(request):
+    if request.method == "GET":
+        queryset= Collection.objects.annotate(product_count=Count("Products")).all()
+        serializer= CollectionSerializer(queryset, many=True)
+        return Response(serializer.data)
+    elif request.method == "POST":
+        serializer=CollectionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+@api_view(["GET", "PUT", "DELETE"])
 def collection_deatil(request, pk):
-    return Response("Ok")
+    collection= get_object_or_404(
+        Collection.objects.annotate(
+        product_count=Count("Products")), pk= pk)
+    if request.method == "GET":
+        serializer= CollectionSerializer(collection)
+        return Response(serializer.data)
+    elif request.method == "PUT":
+        serializer=CollectionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(Collection, status=status.HTTP_202_ACCEPTED)
+    elif request.method == "DELETE":
+        collection.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
