@@ -67,5 +67,7 @@ def collection_deatil(request, pk):
         serializer.save()
         return Response(Collection, status=status.HTTP_202_ACCEPTED)
     elif request.method == "DELETE":
+        if collection.products.count() > 0:
+            return Response({"error" : "it can't be deleted, beacuse this collection have Products"},status=status.HTTP_404_NOT_FOUND)
         collection.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
