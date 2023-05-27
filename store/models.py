@@ -9,7 +9,7 @@ class Promotion(models.Model):
 class Collection(models.Model):
     title = models.CharField(max_length=255)
     featured_product = models.ForeignKey(
-        'Product', on_delete=models.SET_NULL, null=True, related_name='+')
+        'Product', on_delete=models.SET_NULL, null=True, related_name='+', blank=True)
     
     def __str__(self) -> str:
         return self.title
@@ -29,7 +29,7 @@ class Product(models.Model):
         )
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
-    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, related_name="Products")
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, related_name="products")
     promotions = models.ManyToManyField(Promotion, blank=True)
 
     def __str__(self) -> str:
