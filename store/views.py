@@ -2,6 +2,8 @@ from typing import Any
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Count
+
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -48,7 +50,7 @@ class ProductDetails(APIView):
 class CollectionList(APIView):
     def get(self, request):
         queryset= Collection.objects.annotate(product_count=Count("products")).all()
-        serializer= CollectionSerializer(queryset, many=True)
+        serializer= CollectionSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
     def post(self, request):
         serializer=CollectionSerializer(data=request.data)
