@@ -1,8 +1,8 @@
 from typing import Any
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from django.db.models import Count
-
+from django.db.models.aggregates import Count
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,18 +13,14 @@ from .serializer import ProductSerializer, CollectionSerializer
 
 # Create your views here.
 
-class ProductList(APIView):
+class ProductList(ListCreateAPIView):
 
-    def get(self, request):
-        queryset = Product.objects.select_related("collection").all()
-        serializer= ProductSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
-    
-    def post(self, request):
-        serializer = ProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    queryset= Product.objects.select_related("collection").all()
+    serializer_class = ProductSerializer
+
+    def get_serializer_context(self): 
+        return {'request': self.request}
+
 
 class ProductDetails(APIView):
     
@@ -47,16 +43,10 @@ class ProductDetails(APIView):
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-class CollectionList(APIView):
-    def get(self, request):
-        queryset= Collection.objects.annotate(product_count=Count("products")).all()
-        serializer= CollectionSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
-    def post(self, request):
-        serializer=CollectionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+class CollectionList(ListCreateAPIView):
+
+    queryset= Collection.objects.annotate(product_count=Count("products")).all()
+    serializer_class= CollectionSerializer
     
 
 class CollectionDeatils(APIView):
