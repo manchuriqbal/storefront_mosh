@@ -40,21 +40,12 @@ class CollectionList(ListCreateAPIView):
     serializer_class= CollectionSerializer
     
 
-class CollectionDeatils(APIView):
-    def get(self, request, pk):
-        collection= get_object_or_404(
-        Collection.objects.annotate(
-        product_count=Count("products")), pk= pk)
-        serializer= CollectionSerializer(collection)
-        return Response(serializer.data)
-    def put(self, request, pk):
-        collection= get_object_or_404(
-        Collection.objects.annotate(
-        product_count=Count("products")), pk= pk)
-        serializer=CollectionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(Collection, status=status.HTTP_202_ACCEPTED)
+class CollectionDeatils(RetrieveUpdateDestroyAPIView):
+
+    queryset= Collection.objects.annotate(product_count=Count('products'))
+    serializer_class= CollectionSerializer
+    
+
     def delete(self, request, pk):
         collection= get_object_or_404(
         Collection.objects.annotate(
