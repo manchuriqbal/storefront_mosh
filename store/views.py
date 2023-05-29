@@ -2,73 +2,35 @@ from typing import Any
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models.aggregates import Count
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.decorators import api_view
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from .models import Product, Collection
+from .models import Product, Collection, OrderItem
 from .serializer import ProductSerializer, CollectionSerializer
 
 # Create your views here.
-
-class ProductList(ListCreateAPIView):
-
-    queryset= Product.objects.select_related("collection").all()
+class ProductViewSet(ModelViewSet):
+    queryset= Product.objects.all()
     serializer_class = ProductSerializer
 
     def get_serializer_context(self): 
         return {'request': self.request}
-
-
-class ProductDetails(APIView):
     
-    def get(self, request, id):
-        product = get_object_or_404(Product, pk=id)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
-    
-    def put(self, request, id):
-        product = get_object_or_404(Product, pk=id)
-        serializer= ProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, id):
-        product = get_object_or_404(Product, pk=id)
-        if product.orderitems.count() > 1:
+    def destroy(self, request, *args, **kwargs):
+        if OrderItem.objects.filter(product_id=kwargs["pk"]).count() > 0:
             return Response({"error" : "it can't be deleted, beacuse this is associate with OrderItem"},status=status.HTTP_404_NOT_FOUND)
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
-class CollectionList(ListCreateAPIView):
+        return super().destroy(request, *args, **kwargs)
 
+    
+class CollectionViewSet(ModelViewSet):
     queryset= Collection.objects.annotate(product_count=Count("products")).all()
     serializer_class= CollectionSerializer
-    
 
-class CollectionDeatils(APIView):
-    def get(self, request, pk):
-        collection= get_object_or_404(
-        Collection.objects.annotate(
-        product_count=Count("products")), pk= pk)
-        serializer= CollectionSerializer(collection)
-        return Response(serializer.data)
-    def put(self, request, pk):
-        collection= get_object_or_404(
-        Collection.objects.annotate(
-        product_count=Count("products")), pk= pk)
-        serializer=CollectionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(Collection, status=status.HTTP_202_ACCEPTED)
-    def delete(self, request, pk):
-        collection= get_object_or_404(
-        Collection.objects.annotate(
-        product_count=Count("products")), pk= pk)
-        if collection.products.count() > 0:
+    def destroy(self, request, *args, **kwargs):
+        if Product.objects.filter(collection_id=kwargs["pk"]).count() > 0:
             return Response({"error" : "it can't be deleted, beacuse this collection have Products "},status=status.HTTP_404_NOT_FOUND)
-        collection.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return super().destroy(request, *args, **kwargs)
