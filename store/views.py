@@ -19,22 +19,9 @@ class ProductViewSet(ModelViewSet):
 
     def get_serializer_context(self): 
         return {'request': self.request}
-<<<<<<< HEAD
     
     def destroy(self, request, *args, **kwargs):
         if OrderItem.objects.filter(product_id=kwargs["pk"]).count() > 0:
-=======
-
-
-class ProductDetails(RetrieveUpdateDestroyAPIView):
-    queryset= Product.objects.all()
-    serializer_class= ProductSerializer
-
-    
-    def delete(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        if product.orderitems.count() > 1:
->>>>>>> 0236d2dfe25fc01f566c85c85a5d3fc2a0c14da4
             return Response({"error" : "it can't be deleted, beacuse this is associate with OrderItem"},status=status.HTTP_404_NOT_FOUND)
         return super().destroy(request, *args, **kwargs)
 
@@ -43,22 +30,8 @@ class CollectionViewSet(ModelViewSet):
     queryset= Collection.objects.annotate(product_count=Count("products")).all()
     serializer_class= CollectionSerializer
 
-<<<<<<< HEAD
     def destroy(self, request, *args, **kwargs):
         if Product.objects.filter(collection_id=kwargs["pk"]).count() > 0:
-=======
-class CollectionDeatils(RetrieveUpdateDestroyAPIView):
-
-    queryset= Collection.objects.annotate(product_count=Count('products'))
-    serializer_class= CollectionSerializer
-    
-
-    def delete(self, request, pk):
-        collection= get_object_or_404(
-        Collection.objects.annotate(
-        product_count=Count("products")), pk= pk)
-        if collection.products.count() > 0:
->>>>>>> 0236d2dfe25fc01f566c85c85a5d3fc2a0c14da4
             return Response({"error" : "it can't be deleted, beacuse this collection have Products "},status=status.HTTP_404_NOT_FOUND)
         return super().destroy(request, *args, **kwargs)
     
