@@ -11,7 +11,7 @@ router.register("collections", views.CollectionViewSet)
 review_router= routers.NestedDefaultRouter(router, "products", lookup="product")
 review_router.register("reviews", views.ReviewViewSet, basename="product-review")
  
-# URLConf
+# URLConf no 
 
 urlpatterns = [
     path("", include(router.urls)),
