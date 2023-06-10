@@ -7,14 +7,21 @@ from pprint import pprint
 router= routers.DefaultRouter()
 router.register("products", views.ProductViewSet, basename="products")
 router.register("collections", views.CollectionViewSet)
+router.register('carts', views.CartViewSet, basename='carts')
+
 
 review_router= routers.NestedDefaultRouter(router, "products", lookup="product")
 review_router.register("reviews", views.ReviewViewSet, basename="product-review")
+
+items_router = routers.NestedDefaultRouter(router, "carts", lookup="cart")
+items_router.register("items", views.CartItemViewSet, basename="cart-items")
+
  
 # URLConf no 
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("", include(review_router.urls))
+    path("", include(review_router.urls)),
+    path("", include(items_router.urls)),
 ]
 
