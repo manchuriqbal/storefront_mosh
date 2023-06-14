@@ -94,9 +94,6 @@ class Order(models.Model):
             ("can_cancel", "Can cancel Order")
         ]
 
-   
-
-
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
