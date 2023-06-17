@@ -1,3 +1,4 @@
+from typing import Any
 from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -12,7 +13,7 @@ from .pagination import DefultPagination
 from .models import Product, Collection, OrderItem, Review, Cart, CartItem, Customer
 from .serializer import ProductSerializer, CollectionSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer
 from .filters import ProductFilter
-from .permission import IsAdminOrReadOnly
+from .permission import IsAdminOrReadOnly, CanViewHistory
 
 # Create your views here.
 class ProductViewSet(ModelViewSet):
@@ -86,7 +87,9 @@ class CustomerViewSet(ModelViewSet):
     serializer_class = CustomerSerializer
     permission_classes = [IsAdminUser]
 
-    
+    @action(detail=True, permission_classes = [CanViewHistory])
+    def history(self, request, pk):
+        return Response("ok")
 
     @action(detail=False, methods=["GET","PUT"], permission_classes = [IsAdminOrReadOnly])
     def me(self, request):
