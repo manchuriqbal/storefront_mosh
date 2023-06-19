@@ -103,6 +103,10 @@ class CustomerViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data)
 
+class OrderItemViewSet(ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
+
 class OrderViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -121,7 +125,3 @@ class OrderViewSet(ModelViewSet):
     
     def get_serializer_context(self):
         return {"user_id": self.request.user.id}
-    
-class OrderItemViewSet(ModelViewSet):
-    queryset = OrderItem.objects.all()
-    serializer_class = OrderItemSerializer
