@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .pagination import DefultPagination
 from .models import Product, Collection, OrderItem, Review, Cart, CartItem, Customer, Order
-from .serializer import ProductSerializer, CollectionSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer, OrderSerializer, OrderItemSerializer, CreateOrderSerializer
+from .serializer import ProductSerializer, CollectionSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer, OrderSerializer, OrderItemSerializer, CreateOrderSerializer, UpdateOrderSerializer
 from .filters import ProductFilter
 from .permission import IsAdminOrReadOnly, CanViewHistory
 
@@ -126,6 +126,8 @@ class OrderViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "POST":
             return CreateOrderSerializer
+        elif self.request.method == "PATCH":
+            return UpdateOrderSerializer
         return OrderSerializer
     
     def create(self, request, *args, **kwargs):
