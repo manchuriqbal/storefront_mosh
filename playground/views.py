@@ -7,10 +7,10 @@ from tags.models import TaggedItem
 
 def say_hello(request):
 
-    queryset = Product.objects.filter(pk=0).exists()
+    queryset = Product.objects.filter(unit_price__gt=20)
     
     
     
 
-    return render(request, 'hello.html', {'name': 'Mosh'})
+    return render(request, 'hello.html', {'name': 'Mosh', "produts" : queryset})
   
