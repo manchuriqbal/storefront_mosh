@@ -5,13 +5,12 @@
     {% else %}
     <h1>Hello World</h1>
     {% endif %}
+    <p>hello</p>
 
     <ul>
-      {% for order in orders %}
-      <li> {{ order.id }} - {{order.customer.first_name}} </li>
-      {% endfor %}
-      {{result}}
+      {%for product in produts%}
+      <li>{{product.order}}</li>
+     {% endfor %}
     </ul>
-    <p>hello</p>
   </body>
 </html>
