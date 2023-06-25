@@ -11,4 +11,4 @@ def say_hello(request):
     queryset = OrderItem.objects.filter(product__collection__id=3)
     
     return render(request, 'hello.html', {'name': 'Mosh', "produts" : queryset})
-  
+     
