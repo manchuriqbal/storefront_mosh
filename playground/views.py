@@ -8,8 +8,7 @@ from tags.models import TaggedItem
 
 def say_hello(request):
 
-    product = OrderItem.objects.values("product_id").distinct()
-    queryset = Product.objects.filter(id__in = product)
+    queryset = Product.objects.defer("unit_price")
 
     return render(request, 'hello.html', {'name': 'Mosh', "produts" : list(queryset)})
      
