@@ -108,6 +108,8 @@ class OrderItem(models.Model):
         validators=[MinValueValidator(1)]
         )
 
+    
+
 
 class Address(models.Model):
     street = models.CharField(max_length=255)
