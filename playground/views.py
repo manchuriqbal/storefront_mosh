@@ -8,7 +8,7 @@ from tags.models import TaggedItem
 
 def say_hello(request):
 
-    queryset = Product.objects.earliest("unit_price")
+    queryset = Product.objects.order_by("title")[5:10]
     
     return render(request, 'hello.html', {'name': 'Mosh', "produts" : queryset})
      
