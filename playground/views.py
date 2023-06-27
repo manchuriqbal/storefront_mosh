@@ -8,7 +8,7 @@ from tags.models import TaggedItem
 
 def say_hello(request):
 
-    queryset = Product.objects.defer("unit_price")
+    queryset = Order.objects.select_related("customer").prefetch_related("items__product").order_by("-placed_at")[:5]
 
     return render(request, 'hello.html', {'name': 'Mosh', "produts" : list(queryset)})
      
