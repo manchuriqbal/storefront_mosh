@@ -9,7 +9,7 @@ from tags.models import TaggedItem
 
 def say_hello(request):
 
-    queryset = Product.objects.aggregate(count= Count("id"), min=Min("unit_price"))
+    queryset = Product.objects.filter(collection_id=3).aggregate(Minimum= Min("unit_price"), Maximum= Max("unit_price"),Avgarage= Avg("unit_price"),)
 
     return render(request, 'hello.html', {'name': 'Mosh', "produts" : queryset})
      
