@@ -8,9 +8,22 @@ from django.core.exceptions import ObjectDoesNotExist
 from store.models import Product, Collection, Order, OrderItem, Customer
 from tags.models import TaggedItem
 
+
 def say_hello(request):
-    
-    Collection.objects.filter(pk=13).delete()
+
+    with transaction.atomic():
+
+        order = Order()
+        order.customer_id = 10
+        order.save()
+
+        items = OrderItem()
+        items.order = order
+        items.product_id = 15
+        items.quantity = 17
+        items.unit_price = 85
+        items.save()
+
 
     return render(request, 'hello.html', {'name': 'Mosh'})
      
