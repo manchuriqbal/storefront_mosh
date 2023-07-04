@@ -10,11 +10,7 @@ from tags.models import TaggedItem
 
 def say_hello(request):
     
-    collection = Collection()
-    collection.title = "Gaget Items"
-    collection.featured_product = Product(pk=1)
-    collection.save()
-    
+    Collection.objects.filter(pk=13).delete()
 
     return render(request, 'hello.html', {'name': 'Mosh'})
      
