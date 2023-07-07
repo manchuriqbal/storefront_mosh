@@ -8,12 +8,22 @@ from django.core.exceptions import ObjectDoesNotExist
 from store.models import Product, Collection, Order, OrderItem, Customer
 from tags.models import TaggedItem
 
+
 def say_hello(request):
-    discounted_price = ExpressionWrapper( F("unit_price") * 0.8, output_field=DecimalField())
 
-    queryset = Product.objects.annotate(
-        discounted_price = discounted_price
-    )
+    with transaction.atomic():
 
-    return render(request, 'hello.html', {'name': 'Mosh', "produts" : list(queryset)})
+        order = Order()
+        order.customer_id = 10
+        order.save()
+
+        items = OrderItem()
+        items.order = order
+        items.product_id = 15
+        items.quantity = 17
+        items.unit_price = 85
+        items.save()
+
+
+    return render(request, 'hello.html', {'name': 'Mosh'})
      
